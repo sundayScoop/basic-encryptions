@@ -22,16 +22,19 @@ class Builder:
         for orc in self.orc_list:
             share = orc.get_orc_share()
             print(share)
+            print("hey")
             self.share_list.append(share)
             i+=1
             if i >= self.share_amount: break # Only query specific number of orcs as per user request
         print("ORC LIST END") 
     
-    def generate_orc_secrets(self): # Math involved
+    def generate_orc_secrets(self, p): # Math involved
         result = 1
 
         for share in self.share_list: # Multiply all orc shares together
             result = result * share
+        
+        result = result % p  # result (product of a mod m ... z mod m) mod m = (product a..z which is G^s) mod m
         
         return result
                 

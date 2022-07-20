@@ -10,7 +10,7 @@ class Encrypt:
 
         print("NOTE!!! Coefficient for x^0 will be your secret!")
 
-        secret_number = float(input(f"Enter secret number to encrypt: "))
+        secret_number = int(input(f"Enter secret number to encrypt: "))
 
         p = polynomial(secret_number, share_amount)
         p.generate_random_coefficients()
@@ -25,11 +25,11 @@ class Encrypt:
 
         return shares
     
-    def create_orcs(share_list, g):
+    def create_orcs(share_list, g, p):
         orc_list = []
 
         for share in share_list:
-            orc = Orc(share, g)
+            orc = Orc(share, g, p)
             orc_list.append(orc)
         return orc_list
 
