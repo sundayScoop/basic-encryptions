@@ -1,8 +1,8 @@
 class Orc:
-    def __init__(self, point, orc_xs_list, g) -> None:
+    def __init__(self, point, g) -> None:
         self.orc_x = point[0]
         self.orc_y = point[1]
-        self.orc_xs_list = orc_xs_list
+        self.orc_xs_list = []
         self.g = g
 
     def get_orc_share(self): # Math involved
@@ -18,3 +18,9 @@ class Orc:
         result = pow(self.g, multiplication) # Raise G to the calculation
         
         return result # The secret
+    
+    def update_orc_list(self, orc_xs_list):
+        self.orc_xs_list = orc_xs_list
+    
+    def get_orc_x(self):
+        return self.orc_x

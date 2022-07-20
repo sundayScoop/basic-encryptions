@@ -28,12 +28,8 @@ class Encrypt:
     def create_orcs(share_list, g):
         orc_list = []
 
-        orc_xs_list = []
-        for point in share_list:
-            orc_xs_list.append(point[0])
-
         for share in share_list:
-            orc = Orc(share, orc_xs_list, g)
+            orc = Orc(share, g)
             orc_list.append(orc)
         return orc_list
 
