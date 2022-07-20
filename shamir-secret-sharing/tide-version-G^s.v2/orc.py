@@ -1,22 +1,20 @@
 class Orc:
-    def __init__(self, orc_y, orc_xs_list, g) -> None:
+    def __init__(self, point, orc_xs_list, g) -> None:
+        self.orc_x = point[0]
+        self.orc_y = point[1]
         self.orc_xs_list = orc_xs_list
-        self.orc_y = orc_y
         self.g = g
 
-    def get_share(self): # Math involved
+    def get_orc_share(self): # Math involved
         j = 0
-        k = len(self.point_list)
-        sum = 0
+        k = len(self.orc_xs_list)
         multiplication = 0
 
+        multiplication = self.orc_y
         while j < k:
-            m = 0
-            multiplication = self.point_list[j][1] # Get y_point of point_list[j]
-            while m < k:
-                if m != j: multiplication = multiplication * (self.point_list[m][0]/(self.point_list[m][0] - self.point_list[j][0]))
-                m+=1
-            sum = sum + multiplication
+            if self.orc_xs_list[j] != self.orc_x: multiplication = multiplication * (self.orc_xs_list[j]/(self.orc_xs_list[j] - self.orc_x))
             j+=1
         
-        return sum # The secret
+        result = pow(self.g, multiplication) # Raise G to the calculation
+        
+        return result # The secret

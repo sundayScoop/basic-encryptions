@@ -23,7 +23,7 @@ class Encrypt:
         print(shares)
         print("ORIGINAL POLY POINTS END")
 
-        return [shares]
+        return shares
     
     def create_orcs(share_list, g):
         orc_list = []
@@ -33,7 +33,7 @@ class Encrypt:
             orc_xs_list.append(point[0])
 
         for share in share_list:
-            orc = Orc(share[1], orc_xs_list, g)
+            orc = Orc(share, orc_xs_list, g)
             orc_list.append(orc)
         return orc_list
 

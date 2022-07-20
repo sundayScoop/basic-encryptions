@@ -9,6 +9,6 @@ class Decrypt:
         b = Builder(self.orc_list, share_amount)
         b.request_orc_shares()
 
-        secret = b.get_secret()
+        secret = b.generate_orc_secrets()
 
         print(secret)
