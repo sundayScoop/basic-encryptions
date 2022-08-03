@@ -1,14 +1,13 @@
 from random import randint
 
-from itsdangerous import base64_encode
+
 from polynomial import polynomial
 from point import Point
 import hashlib
 import binascii
 import base64
-from ecdsa import der
-import schnorr_lib
 import sys
+from f_msg import Msg_Requester
 
 
 
@@ -24,10 +23,12 @@ p = polynomial(0, 7, m)
 
 G = Point(Gx, Gy)
 
-priv_key = 102987336249554097029535212322581322789799900648198034993379397001115665086549
-privkey_hex = "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+priv_key = 102987336249554097029535212322581322789799900648198034993379397001115665086549 #this works
+privkey_hex = "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855" #this works
 
-pub_key = G * priv_key # This works
+
+
+pub_key = G * priv_key # This works definately!
 
 print("--------")
 print(pub_key.x)
@@ -37,13 +38,9 @@ print("--------")
 k = randint(1, m)
 #k = 123456789
 
-message = b"12345678901234567890123456789012"
-#bin = binascii.unhexlify(message)
-hash = hashlib.sha256(message).digest()
-hash2 = hashlib.sha256(hash).hexdigest()
 
-message_hash_decimal = int(hash2, 16) # This works
-print("HASH: " + str(message_hash_decimal))
+#Sktech
+message_hash_decimal = Msg_Requester.getMsg()
 
 ## Signature
 R = G * k
@@ -52,58 +49,60 @@ R = G * k
 r: int = R.x % n # Works
 s: int = (pow(k, -1, n)*(message_hash_decimal + (priv_key*r))) % n # Works
 
-print("R: " + str(r))
-print("S: " + str(s))
+
 
 # checks to make sure it is lower s value
 if s > n/2: s = n - s # Works
 
 
-# Convert to base64
+# Sktech
+#r = 10812059355684102320433147997847874770455099645674156258324787660491311276333
+#s = 1139044670623009341183358904162604827072884806515105648340258540807353884833
 
-final = der.encode_sequence(der.encode_integer(r), der.encode_integer(s))
-finalllll = final.hex()
-print("DER: " + finalllll)
-print("SIGNATURE???: " + str(base64_encode(final)))
+##
 
 
+print("R: " + str(r))
+print("S: " + str(s))
 
 
 ## Verify
 
-point1 = G * (pow(s, -1, n)*message_hash_decimal)
-point2 = pub_key * ((pow(s, -1, n)*r))
+point1 = (pow(s, -1, n)*message_hash_decimal) % n
+point2 = ((pow(s, -1, n)*r)) % n
 
-point3 = point1 + point2
+point3 = (G * point1) + (pub_key * point2)
 
-print(point3.x)
-print(R.x)
-
+print((r == point3.x % n))
 
 
+##
+#r = 100000000000
+#s = 100
+##
 
+i = 0
+n = 27
+for i in range(3):
+   
+    
+    nn = n.to_bytes(1, 'big')
+    #nn = n.to_bytes(1, 'big')
 
-n = 28
-nn = n.to_bytes(1, 'little')
-#nn = n.to_bytes(1, 'big')
+    rb = r.to_bytes(32, 'big')
+    sb = s.to_bytes(32, 'big')
 
-rb = r.to_bytes(32, 'little')
-sb = s.to_bytes(32, 'little')
+    #rb = r.to_bytes(32, 'big')
+    #sb = s.to_bytes(32, 'big')
 
-#rb = r.to_bytes(32, 'big')
-#sb = s.to_bytes(32, 'big')
+    b_array = bytearray(nn)
+    b_array = b_array + (bytearray(rb))
+    b_array = b_array + (bytearray(sb))
 
-b_array = bytearray(nn)
-b_array = b_array + (bytearray(rb))
-b_array = b_array + (bytearray(sb))
+    sig_hex = base64.b64encode(b_array)
 
-
-
-print(sb)
-
-sig_hex = base64.b64encode(b_array)
-
-print(sig_hex)
+    print(str(sig_hex))
+    n +=1
 
 
 
