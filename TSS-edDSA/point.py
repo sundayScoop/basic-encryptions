@@ -3,25 +3,19 @@ from polynomial import Polynomial
 
 
 class Point:
-    def __init__(self, x=None, y=None, a=0, b=7, m=(2**255 - 19)):
-        self.x = x
-        self.y = y
+    def __init__(self, x=None, y=None, a=-1, d=(-121665 * pow(121666, -1, 2**255 - 19)), m=(2**255 - 19)): # lower d is the mod_inv of 121666 for modulus m
+        self.x: int = x
+        self.y: int = y
         self.a = a ## Quick hack
-        self.b = b
+        self.d = d
         self.m = m
     
     def __add__(self, other):
         new_point = Point()
         if isinstance(other, Point):
-            if other.x != self.x and other.y != self.y:
-                slope = ((self.y - other.y) * pow(self.x - other.x, -1, self.m)) % self.m
-                new_point.x = (pow(slope, 2) - self.x - other.x) % self.m
-                new_point.y = (slope * (self.x - new_point.x) - self.y) % self.m
-            else:
-                slope = ((3*pow(self.x, 2) + self.a) * pow(2 * self.y, -1, self.m)) % self.m
-                new_point.x = (pow(slope, 2) - (2 * self.x)) % self.m
-                new_point.y = (slope * (self.x - new_point.x ) - self.y) % self.m
-                
+            new_point.x = ((self.x*other.y + self.y*other.x) * pow(1 + self.d*self.x*other.x*self.y*other.y, -1, self.m)) % self.m  ## https://bibliotecadigital.ipb.pt/bitstream/10198/24067/1/Nakai_Eduardo.pdf  I added finite fields here
+            new_point.y = ((self.y*other.y - self.a*self.x*other.x) * pow(1 - self.d*self.x*other.x*self.y*other.y, -1, self.m)) % self.m # Point addition and doubling are the same for twisted edwards curves
+            # i am 90% sure this is correct
             return new_point
     
     def __mul__(self, multiplier: int):
