@@ -2,16 +2,17 @@ from ork import Ork
 from point import Point
 
 class Sharer:
-    def __init__(self, x_list, G: Point, p:int) -> None:
+    def __init__(self, x_list, G: Point, p:int, order: int) -> None:
         self.x_list = x_list
         self.G = G
         self.ork_list = []
         self.p = p
+        self.order = order
     
     def createOrks(self):
         i = 0
         for x in self.x_list:
-            self.ork_list.append(Ork(self.x_list, x, self.G, self.p))
+            self.ork_list.append(Ork(self.x_list, x, self.G, self.p, self.order))
             i+=1
         return self.ork_list
     

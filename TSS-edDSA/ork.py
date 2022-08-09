@@ -4,7 +4,7 @@ from polynomial import Polynomial
 from point import Point
 
 class Ork:
-    def __init__(self, x_list, my_x, G: Point, p: int) -> None:
+    def __init__(self, x_list, my_x, G: Point, p: int, order: int) -> None:
         self.x_list = x_list
         self.my_x = my_x
         self.polynomial: Polynomial = Polynomial(len(x_list), p)
@@ -13,6 +13,7 @@ class Ork:
         self.G = G
         self.randd = -1
         self.p = p
+        self.order = order
     
     def getMyX(self):
         return self.my_x
@@ -61,18 +62,17 @@ class Ork:
         #e = int(hashlib.sha256(hash_data).hexdigest(), 16)
         rx_bytes = r.x.to_bytes(32, 'little')             # Little endian!!!! edDSA encoding standard
         ry_bytes = r.y.to_bytes(32, 'little')
-        msg_bytes = bytes(msg_to_sign)
+        msg_bytes = bytes(msg_to_sign.encode())
 
         hash_data = rx_bytes
         hash_data += ry_bytes
         hash_data += msg_bytes
 
-        e = int(hashlib.sha256(hash_data).hexdigest(), 16) # integer value of the 32 byte hash
+        e = int(hashlib.sha256(hash_data).hexdigest(), 16) % self.order# integer value of the 32 byte hash    # All Es are equal
+        
+        print(e)
 
-        print("P_key: " + str(self.get_partial_key()))
-        print("Rand: " + str(self.randd))
+        return (self.randd + (self.get_partial_key()*e))
 
-        return (self.randd - (self.get_partial_key()*e))
-
-    def get_partial_pub_key(self):  # Returns G * partialK. Multiplied together will be G * k which is pub key
+    def get_partial_pub_key(self):  # Returns G * partialK. Summed together will be G * k which is pub key
         return self.G * self.get_partial_key()   #isn't partial key a negative sometimes???

@@ -19,7 +19,7 @@ class Polynomial:
     
     def generate_random_coefficients(self):
         for i in range(self.threshold):
-            self.coefficent_list.append(random.randint(1, 5))
+            self.coefficent_list.append(random.randint(1, 100))
         #print('y = {0} + {1}x +{2}x^(2) + {3}x^(3) + {4}x^(4) + {5}x^(5) + {6}x^(6) + {7}x^(7) + {8}x^(8) + {9}x^(9) + {10}x^(10) + {11}x^(11) + {12}x^(12) + {13}x^(13)'.format(*self.coefficent_list)) # for 14 shares
 
 

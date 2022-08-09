@@ -5,7 +5,7 @@ from sharer import Sharer
 from ork import Ork
 from point import Point
 
-share_num = 3
+share_num = 14
 x_list = list(range(1, share_num+1)) 
 
 # Ed25519 Parametres
@@ -23,15 +23,15 @@ order = 723700557733226221397318656304299424085711635937990760600195093828545425
 
 
 ## Create CMK
-sharer = Sharer(x_list, G, p)
+sharer = Sharer(x_list, G, p, order)
 orc_list = sharer.createOrks()
 
 public_key: Point = sharer.createCMK() # Good! Able to be interpolated. Times it by G now
-print(public_key.x)
+print("Public X " + str(public_key.x))
 
-print(sharer.get_ork_random_numbers())
+#print(sharer.get_ork_random_numbers())
 
-
+'''
 lan = 0
 for orc in orc_list:
     lan = lan + orc.get_partial_key()   
@@ -46,18 +46,18 @@ msg_to_sign = input("Enter the message you wish to sign: ")
 # Begin signing process
 
 # get random points from orks
-r: Point = orc_list[0].generate_random_point()
+r: Point = orc_list[0].generate_random_point() # R public
 
 for orc in orc_list[1:]:
     r = r + orc.generate_random_point()
 
-print(r.x)
+print("R.x" + str(r.x))
 
 # generating e
 # hash will be H(r.x, r.y, message)
 rx_bytes = r.x.to_bytes(32, 'little')             # Little endian!!!! edDSA encoding standard
 ry_bytes = r.y.to_bytes(32, 'little')
-msg_bytes = bytes(msg_to_sign)
+msg_bytes = bytes(msg_to_sign.encode())
 
 hash_data = rx_bytes
 hash_data += ry_bytes
@@ -67,28 +67,25 @@ hash_data += msg_bytes
 #hash_data = bytes(Gr)
 #hash_data += bytes(msg_to_sign.encode('utf-8'))
 
-e = int(hashlib.sha256(hash_data).hexdigest(), 16) # int value of 32 byte hash
-
+e = int(hashlib.sha256(hash_data).hexdigest(), 16) % order # int value of 32 byte hash
+print("Client e: " + str(e))
 
 
 # generating S. Remeber the orks do this as the private key is split up amonst them
-s = 0
+s = 0 # S public
 for orc in orc_list:
     s = s + orc.sign_message(msg_to_sign, r)
-    print("partials : " + str(s))
+s = s % order
 
 print("S: " + str(s))
 
 ## Verification
+point1 = G * s
+point2 = r + (public_key * e)
 
-Gk = 1 # Pub key
-for orc in orc_list:
-    Gk = Gk * orc.get_partial_pub_key()
+#Ry: Point = (G * s) + (public_key * e) 
 
 
+print(point1.x == point2.x) # This is a hack. But it proves the signature is valid
 
-Ry: int = pow(g, s) * pow(Gk, int(e, 16))
 
-print(Ry == Gr) # This is a hack. But it proves the signature is valid
-
-'''
