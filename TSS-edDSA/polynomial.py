@@ -18,7 +18,7 @@ class Polynomial:
     
     def generate_random_coefficients(self):
         for i in range(self.threshold):
-            self.coefficent_list.append(random.randint(1, 10))
+            self.coefficent_list.append(random.randint(1, 4))
         print("Rand c_list: " + str(self.coefficent_list))
 
 

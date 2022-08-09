@@ -1,9 +1,9 @@
 from re import A
-from polynomial import polynomial
+from polynomial import Polynomial
 
 
 class Point:
-    def __init__(self, x=None, y=None, a=0, b=7, m=115792089237316195423570985008687907853269984665640564039457584007908834671663):
+    def __init__(self, x=None, y=None, a=0, b=7, m=(2**255 - 19)):
         self.x = x
         self.y = y
         self.a = a ## Quick hack
